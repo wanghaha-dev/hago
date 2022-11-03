@@ -1,7 +1,7 @@
 # Hago Web framework
 
 #### 介绍
-hago 是一个开箱即用的web框架，好了，就介绍这一点就完事了。
+hago 是一个零依赖，开箱即用的web框架，好了，就介绍这一点就完事了。
 不明白的可以联系QQ: 31931727
 
 #### 已支持的功能
@@ -21,4 +21,57 @@ JWT
 #### 安装
 ```sh
 go get github.com/wanghaha-dev/hago
+```
+
+#### 使用示例
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/wanghaha-dev/hago"
+	"net/http"
+)
+
+func main() {
+	server := hago.Default()
+	server.GET("/hello", func(ctx *hago.Context) {
+		ctx.String(http.StatusOK, "hello")
+	})
+
+	server.GET("/api/:name/list", func(ctx *hago.Context) {
+		name := ctx.Param("name")
+		age := ctx.Query("age")
+
+		ctx.JSON(http.StatusOK, hago.H{
+			"name": name,
+			"age":  age,
+		})
+	})
+
+	server.ANY("/any", func(ctx *hago.Context) {
+		ctx.String(http.StatusOK, "any ...")
+	})
+
+	server.Static("/assets", "./static")
+
+	server.LoadHTMLGlob("templates/*")
+
+	server.GET("/h1", func(ctx *hago.Context) {
+		ctx.HTML(http.StatusOK, "hello.html", nil)
+	})
+
+	v1 := server.Group("/v1")
+	v1.GET("/user/list", func(ctx *hago.Context) {
+		ctx.String(http.StatusOK, "v1 user list page...")
+	})
+
+	v1.Use(func(ctx *hago.Context) {
+		fmt.Println("before...")
+		ctx.Next()
+		fmt.Println("after...")
+	})
+
+	server.Run(":9999")
+}
 ```

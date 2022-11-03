@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type HandlerFunc func(*Context)
+type HandlerFunc func(ctx *Context)
 
 type Engine struct {
 	*RouterGroup

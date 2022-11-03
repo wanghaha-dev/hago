@@ -2,6 +2,7 @@ package hago
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"net/http"
 )
@@ -65,6 +66,20 @@ func (c *Context) String(code int, format string, values ...interface{}) {
 	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
 	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
+}
+
+func (c *Context) Json(code int, data interface{}) {
+	c.SetHeader("Content-Type", "application/json")
+	c.Status(code)
+	output, _ := json.Marshal(data)
+	c.Writer.Write([]byte(output))
+}
+
+func (c *Context) Xml(code int, data interface{}) {
+	c.SetHeader("Content-Type", "text/xml")
+	c.Status(code)
+	output, _ := xml.Marshal(data)
+	c.Writer.Write([]byte(output))
 }
 
 func (c *Context) JSON(code int, obj interface{}) {
